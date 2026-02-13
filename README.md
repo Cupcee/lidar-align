@@ -3,15 +3,29 @@
 Small python tool for re-aligning misaligned lidars in a concatenated "supercloud"
 dataset.
 
+## Known limitations
+
+This tool was made for one specific use-case, so it's not very flexible. Following
+limitations apply:
+
+1. The data is expected to contain a `label` field to color the points,
+which is not strictly necessary to use the tool. If you don't have this data,
+just fill your PCD files with field `label` of all zeroes.
+2. The color map used to color the points according to `label` field is hardcoded,
+and supports classes 0-17. If there are more classes than 18, it assigns color
+`[128, 128, 128]` to those classes.
+
 ## Usage
 
 ### 1. Calibrate with open3D GUI
 
 The calibration tool expects a single PCD format file with input, that has
-fields `x,y,z,sensor_id`.
+fields `x,y,z,sensor_id,label`.
 
 Here `sensor_id` is a `uint8` value that represents the index of the sensors
 from which the data came from.
+
+`label` is a `uint8` value that represents the class index of the point. 
 
 Secondly, it expects transformation matrices for all of the sensors, that were
 used for concatenating the separate sensor frames into a single composite
@@ -40,7 +54,7 @@ tool.
 ### 2. Apply calibration matrix to the whole dataset
 
 This takes as input your dataset you want to recalibrate (directory of `.pcd`
-files). Again fields `x,y,z,sensor_id` are expected. It also takes same
+files). Again fields `x,y,z,sensor_id,label` are expected. It also takes same
 calibration string used in step 1, a path to an output directory and the
 recalibration matrix saved in step 1.
 
